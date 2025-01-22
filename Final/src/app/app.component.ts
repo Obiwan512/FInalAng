@@ -13,12 +13,4 @@ import { HomePageComponent } from './tamplate/home-page/home-page.component';
 })
 
 export class AppComponent {
-  constructor(private router: Router) {
-    this.router.config = [
-      { path: 'login', component: LoginComponent },
-      { path: 'registration', component: RegistrationComponent },
-      { path: 'home', component: HomePageComponent },
-      { path: '', redirectTo: '/login', pathMatch: 'full' },
-    ];
-  }
 }

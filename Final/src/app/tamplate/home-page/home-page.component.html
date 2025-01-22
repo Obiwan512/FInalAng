@@ -1,1 +1,22 @@
-<p>home-page works!</p>
+<div class="home-container">
+    <h1>Welcome to MyMarket</h1>
+  
+    <div class="categories">
+      <button *ngFor="let category of categories" (click)="filterByCategory(category)">
+        {{ category }}
+      </button>
+      <button (click)="filterByCategory('all')">All</button>
+    </div>
+  
+    <div class="products">
+      <div class="product-card" *ngFor="let product of displayedProducts">
+        <img [src]="product.image" alt="{{ product.title }}" />
+        <h3>{{ product.title }}</h3>
+        <p>{{ product.description }}</p>
+        <p class="price">Price: ${{ product.price }}</p>
+        <p class="rating">Rating: {{ product.rating.rate }} ({{ product.rating.count }} reviews)</p>
+        <button class="details-btn">View Details</button>
+      </div>
+    </div>
+  </div>
+  

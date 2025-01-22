@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { Router } from '@angular/router';
 
-// Interface to define the structure of a user
 interface User {
   id: number;
   username: string;
@@ -25,19 +24,19 @@ interface User {
     };
   };
   phone: string;
+  role: 'admin' | 'user';
 }
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl = 'https://fakestoreapi.com/users';
+  private apiUrl = 'https://fakestoreapi.com/users';  
   private userSubject: BehaviorSubject<User | null> = new BehaviorSubject<User | null>(null);
   public user: Observable<User | null> = this.userSubject.asObservable();
 
   constructor(private http: HttpClient, private router: Router) {}
 
-  // Register new user
   register(user: { username: string; password: string }): Observable<any> {
     return this.http.post(this.apiUrl, user).pipe(
       catchError((error) => {
@@ -47,15 +46,20 @@ export class AuthService {
     );
   }
 
-  // Login function
   login(username: string, password: string): Observable<any> {
     return this.http.get<User[]>(this.apiUrl).pipe(
       map((users) => {
         const user = users.find((user) => user.username === username && user.password === password);
         if (user) {
-          // Simulate JWT token storage (you can replace with real JWT logic)
           localStorage.setItem('currentUser', JSON.stringify(user));
           this.userSubject.next(user);
+
+          if (user.role === 'admin') {
+            this.router.navigate(['/admin-dashboard']); 
+          } else {
+            this.router.navigate(['/home-page']); 
+          }
+
           return user;
         }
         throw new Error('Invalid username or password');
@@ -67,15 +71,13 @@ export class AuthService {
     );
   }
 
-  // Get the current logged-in user
   getUser(): User | null {
     return JSON.parse(localStorage.getItem('currentUser') || 'null');
   }
 
-  // Log out the user
   logout(): void {
     localStorage.removeItem('currentUser');
     this.userSubject.next(null);
-    this.router.navigate(['/login']); // Navigate to the login page
+    this.router.navigate(['/login']);
   }
 }

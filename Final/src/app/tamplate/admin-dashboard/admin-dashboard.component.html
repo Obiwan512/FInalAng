@@ -1,1 +1,39 @@
-<p>admin-dashboard works!</p>
+<div class="admin-dashboard">
+    <h1>Admin Dashboard</h1>
+  
+    <div class="product-list">
+      <div class="product-item" *ngFor="let product of products; let i = index">
+        <img [src]="product.image" alt="{{ product.title }}" />
+        <h3>{{ product.title }}</h3>
+        <p>Category: {{ product.category }}</p>
+        <p>Price: ${{ product.price }}</p>
+        <button (click)="editProduct(product)">Edit</button>
+        <button (click)="deleteProduct(i)">Delete</button>
+      </div>
+    </div>
+  
+    <div class="edit-form" *ngIf="selectedProduct">
+      <h2>Edit Product</h2>
+      <form (ngSubmit)="updateProduct()">
+        <label>
+          Title:
+          <input type="text" [(ngModel)]="selectedProduct.title" name="title" />
+        </label>
+        <label>
+          Price:
+          <input type="number" [(ngModel)]="selectedProduct.price" name="price" />
+        </label>
+        <label>
+          Description:
+          <textarea [(ngModel)]="selectedProduct.description" name="description"></textarea>
+        </label>
+        <label>
+          Category:
+          <input type="text" [(ngModel)]="selectedProduct.category" name="category" />
+        </label>
+        <button type="submit">Save</button>
+        <button type="button" (click)="cancelEdit()">Cancel</button>
+      </form>
+    </div>
+  </div>
+  

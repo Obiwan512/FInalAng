@@ -1,22 +1,27 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AuthService } from '../../service/authservice.service';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { AuthService } from '../../service/authservice.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule, RouterModule],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
 })
 export class LoginComponent {
   loginForm: FormGroup;
 
-  constructor(private authService: AuthService, private router: Router, private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+    private authService: AuthService
+  ) {
     this.loginForm = fb.group({
-      username: ['', [Validators.required]],
+      username: ['', [Validators.required]], 
       password: ['', [Validators.required]],
     });
   }
@@ -24,10 +29,14 @@ export class LoginComponent {
   onLogin(): void {
     if (this.loginForm.valid) {
       const { username, password } = this.loginForm.value;
+
       this.authService.login( username, password ).subscribe(
-        (response) => {
-          console.log('User logged in successfully', response);
-          this.router.navigate(['/home']);
+        (response: any) => {
+          if (response && response.role === 'admin') {
+            this.router.navigate(['/admin-dashboard']);
+          } else if (response && response.role === 'user') {
+            this.router.navigate(['/home-page']);
+          }
         },
         (error) => {
           console.error('Login failed', error);
